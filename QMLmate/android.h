@@ -252,7 +252,7 @@ public:
             return QString("%1").arg(result.toString());
         return "未知";
     }
-    Q_INVOKABLE QString Brightness()
+    Q_INVOKABLE QString brightness()
     {
         QAndroidJniObject activity = androidActivity();
         QAndroidJniObject contentResolver = activity.callObjectMethod(
@@ -270,18 +270,19 @@ public:
         return "未知";
     }
 
-    Q_INVOKABLE bool Brightness(int bri)
+    Q_INVOKABLE bool setBrightness(int bri)
     {
+        jint bright=bri;
         QAndroidJniObject activity = androidActivity();
         QAndroidJniObject contentResolver = activity.callObjectMethod(
                                                 "getContentResolver",
                                                 "()Landroid/content/ContentResolver;"
                                             );
-        QAndroidJniObject brightnessModeTag = QAndroidJniObject::fromString("screen_brightness");
+        QAndroidJniObject brightnessModeTag = QAndroidJniObject::fromString("SCREEN_BRIGHTNESS");
         QAndroidJniObject result = QAndroidJniObject::callStaticObjectMethod(
                                        "android/provider/Settings$System",
                                        "putInt",
-                                       "(Landroid/content/ContentResolver;Ljava/lang/String;I)Z;",contentResolver.object<jobject>(),brightnessModeTag.object<jstring>(),bri);
+                                       "(Landroid/content/ContentResolver;Ljava/lang/String;I)Z;",contentResolver.object<jobject>(),brightnessModeTag.object<jstring>(),bright);
         qDebug() << "got Brightness - " << result.isValid();
         if(result.isValid())
             return result.toString()=="1";
@@ -289,7 +290,7 @@ public:
     }
 
     //振动
-    Q_INVOKABLE void Vibrate(int duration)
+    Q_INVOKABLE void vibrate(int duration)
     {
         QAndroidJniEnvironment env;
         QAndroidJniObject activity = androidActivity();
